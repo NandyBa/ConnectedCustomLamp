@@ -178,7 +178,7 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
         else if (action == "test") {
             Serial.println("[WSc] received test command from sinric.com");
         }
-        else if((action == "ChangeColorLEDSripe") || (action == "action.devices.commands.ColorAbsolute")){
+        else if((action == "SetColor") || (action == "action.devices.commands.ColorAbsolute")){
           String color;
           if(action == "ChangeColorLEDSripe"){
             int hue = json["value"]["hue"];
