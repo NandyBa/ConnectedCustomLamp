@@ -25,36 +25,29 @@ CRGB leds[13];
 boolean Multicolor = false;
 int MulticolorColor = 0;
 
-void SetColor(String color){
+void SetAColorAllTheLEDSripe(int R, int G, int B){
+  for(int i=0;i<leds_number;i++){
+    leds[i] = CRGB ( R, G, B);
+  }
+}
+void ChangeColorLEDSripe(String color){
   if(color == "white"){
-    for(int i=0;i<leds_number;i++){
-      leds[i] = CRGB ( 255, 255, 255);
-    }
+    SetAColorAllTheLEDSripe(255, 255, 255);
   }
   else if(color == "red"){
-    for(int i=0;i<leds_number;i++){
-      leds[i] = CRGB ( 255, 0, 0);
-    }
+    SetAColorAllTheLEDSripe(255, 0, 0);
   }
   else if(color == "blue"){
-    for(int i=0;i<leds_number;i++){
-      leds[i] = CRGB ( 0, 0, 255);
-    }
+    SetAColorAllTheLEDSripe(0, 0, 255);
   }
   else if(color == "green"){
-    for(int i=0;i<leds_number;i++){
-      leds[i] = CRGB ( 0, 255, 0);
-    }
+    SetAColorAllTheLEDSripe( 0, 255, 0);
   }
   else if(color == "orange"){
-    for(int i=0;i<leds_number;i++){
-      leds[i] = CRGB (255,69,0);
-    }
+    SetAColorAllTheLEDSripe(255,69,0);
   }
   else if(color == "skyBlue"){
-    for(int i=0;i<leds_number;i++){
-      leds[i] = CRGB (135,206,235);
-    }
+    SetAColorAllTheLEDSripe(135,206,235);
   }
   
   FastLED.show();
@@ -63,15 +56,15 @@ void SetColor(String color){
 void MulticolorChange(){
   
   if(MulticolorColor == 0){
-    SetColor("red");
+    ChangeColorLEDSripe("red");
   }
   else if(MulticolorColor == 1){
-    SetColor("orange");
+    ChangeColorLEDSripe("orange");
   }
   else if(MulticolorColor == 2){
-    SetColor("blue");
+    ChangeColorLEDSripe("blue");
   }else{
-    SetColor("green");
+    ChangeColorLEDSripe("green");
     MulticolorColor = -1;
   }
 
@@ -93,7 +86,7 @@ void turnOn(String deviceId) {
   {  
     Serial.print("Turn on device Esp: ");
     Serial.println(deviceId);
-    SetColor("white");
+    ChangeColorLEDSripe("white");
   } 
   else if (deviceId == SecondDeviceID || (Multicolor))
   {
@@ -185,9 +178,9 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
         else if (action == "test") {
             Serial.println("[WSc] received test command from sinric.com");
         }
-        else if((action == "SetColor") || (action == "action.devices.commands.ColorAbsolute")){
+        else if((action == "ChangeColorLEDSripe") || (action == "action.devices.commands.ColorAbsolute")){
           String color;
-          if(action == "SetColor"){
+          if(action == "ChangeColorLEDSripe"){
             int hue = json["value"]["hue"];
             
             if(hue == 0){ color = "red"; }
@@ -221,7 +214,7 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
             
             
             Serial.println("color: " + color);
-            SetColor(color);
+            ChangeColorLEDSripe(color);
             
         }
       }
