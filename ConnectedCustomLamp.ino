@@ -178,7 +178,7 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
         else if (action == "test") {
             Serial.println("[WSc] received test command from sinric.com");
         }
-        else if((action == "SetColor") || (action == "action.devices.commands.ColorAbsolute")){
+        else if((action == "SetColor") || (action == "SetColorTemperature")|| (action == "action.devices.commands.ColorAbsolute")){
           String color;
           if(action == "SetColor"){
             int hue = json["value"]["hue"];
@@ -191,7 +191,13 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
             else if(hue == 300){ color = "violet"; }
 
             Serial.println("hue: "+ String(hue));
-          }else{
+          }else if(action == "SetColorTemperature"){
+            int value = json ["value"];
+            if(value = 4000){
+              color = "white";
+            }
+          }
+          else{
             String couleur = json["value"]["color"]["name"];
             
             if(couleur == "rouge"){
@@ -202,6 +208,9 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
             }
             else if(couleur == "orange"){
               color = "orange";
+            }
+            else if(couleur == "blanc"){
+              color = "white";
             }
             else if((couleur == "verre") || (couleur = "vert")){ //vert est écrit de cette manière dans le code de Google
               // Ajout d'un patch au cas où ils fixeraient le bug
