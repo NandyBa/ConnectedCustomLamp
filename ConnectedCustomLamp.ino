@@ -23,6 +23,7 @@ int leds_number = 13;
 CRGB leds[13];
 
 boolean Multicolor = false;
+boolean Pacours = false;
 int MulticolorColor = 0;
 
 void SetAColorAllTheLEDSripe(int R, int G, int B){
@@ -51,6 +52,26 @@ void ChangeColorLEDSripe(String color){
   }
   
   FastLED.show();
+}
+
+void OneLEDCircuit(){
+  SwitchOffLights();
+  if((Pacours)){
+    for(int i=1;i<leds_number-1;i++){
+      leds[i-1] = CRGB ( 0, 0, 0);
+      leds[i] = CRGB ( 255, 0, 0);
+      leds[i+1] = CRGB ( 0, 0, 255);
+      FastLED.show();
+      delay(35);
+    }
+    for(int i=1;i<leds_number-1;i++){
+      leds[i-1] = CRGB ( 0, 0, 0);
+      leds[i] = CRGB ( 0, 255, 0);
+      leds[i+1] = CRGB ( 0, 0, 255);
+      FastLED.show();
+      delay(35);
+    }
+  }
 }
 
 void MulticolorChange(){
@@ -86,12 +107,18 @@ void turnOn(String deviceId) {
   {  
     Serial.print("Turn on device Esp: ");
     Serial.println(deviceId);
+    Pacours = false; // We turn off parcours
     ChangeColorLEDSripe("white");
   } 
   else if (deviceId == SecondDeviceID || (Multicolor))
   {
+    Pacours = false; // We turn off parcours
     Multicolor = true;
     MulticolorColor = 0;
+  }else if(deviceId == ThirdDeviceID){
+    Serial.print("Turn on device Esp: ");
+    Serial.println(deviceId);
+    Pacours = true;
   }
   else {
     Serial.print("Turn on for unknown device id: ");
@@ -105,15 +132,24 @@ void turnOff(String deviceId) {
      Serial.print("Turn off Device Esp: ");
      Serial.println(deviceId);
      Multicolor = false; //Pour prevenir l'usage du mauvais nom
+     Pacours = false; // We turn off parcours
      SwitchOffLights();
    }
    else if (deviceId == SecondDeviceID)
    {
      Multicolor = false;
+     Pacours = false; // We turn off parcours
      Serial.print("Turn off Device ID: ");
      Serial.println(deviceId);
      SwitchOffLights();
     
+  }
+  else if(deviceId == ThirdDeviceID){
+     Serial.print("Turn off Device ID: ");
+     Serial.println(deviceId);
+     Multicolor = false; //Pour prevenir l'usage du mauvais nom
+     Pacours = false; // We turn off parcours
+     SwitchOffLights();
   }
   else {
      Serial.print("Turn off for unknown device id: ");
@@ -273,6 +309,9 @@ void loop() {
 
   if(Multicolor){
     MulticolorChange();
+  }
+  if(Pacours){
+    OneLEDCircuit();
   }
   
   if(isConnected) {
