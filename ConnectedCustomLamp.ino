@@ -188,13 +188,14 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
             else if(couleur == "bleu"){
               color = "blue";
             }
-            else if(couleur == "verre" || (couleur = "vert")){ //vert est écrit de cette manière dans le code de Google
+            else if(couleur == "orange"){
+              color = "orange";
+            }
+            else if((couleur == "verre") || (couleur = "vert")){ //vert est écrit de cette manière dans le code de Google
               // Ajout d'un patch au cas où ils fixeraient le bug
               color = "green";
             }
-            else if(couleur = "orange"){
-              color = "orange";
-            }
+            
           }
             
             
