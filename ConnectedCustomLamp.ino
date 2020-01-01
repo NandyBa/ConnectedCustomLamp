@@ -148,7 +148,8 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
         JsonObject& json = jsonBuffer.parseObject((char*)payload); 
         String deviceId = json ["deviceId"];     
         String action = json ["action"];
-        
+
+
         if(action == "setPowerState" || (action == "action.devices.commands.OnOff")) { // Switch or Light
             String value = json ["value"];
             if(value == "ON" || (value)) { //First test for Amazon Alexa second for Google Assistant
@@ -165,7 +166,7 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
         else if (action == "test") {
             Serial.println("[WSc] received test command from sinric.com");
         }
-        else if((action == "SetColor") || (action == "action.devices.ColorAbsolute")){
+        else if((action == "SetColor") || (action == "action.devices.commands.ColorAbsolute")){
           String color;
           if(action == "SetColor"){
             int hue = json["value"]["hue"];
