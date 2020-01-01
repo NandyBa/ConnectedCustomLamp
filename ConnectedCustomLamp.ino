@@ -26,7 +26,12 @@ boolean Multicolor = false;
 int MulticolorColor = 0;
 
 void SetColor(String color){
-  if(color == "red"){
+  if(color == "white"){
+    for(int i=0;i<leds_number;i++){
+      leds[i] = CRGB ( 255, 255, 255);
+    }
+  }
+  else if(color == "red"){
     for(int i=0;i<leds_number;i++){
       leds[i] = CRGB ( 255, 0, 0);
     }
@@ -88,6 +93,7 @@ void turnOn(String deviceId) {
   {  
     Serial.print("Turn on device Esp: ");
     Serial.println(deviceId);
+    SetColor("white");
   } 
   else if (deviceId == SecondDeviceID || (Multicolor))
   {
@@ -152,10 +158,23 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
 
         if(action == "setPowerState" || (action == "action.devices.commands.OnOff")) { // Switch or Light
             String value = json ["value"];
-            if(value == "ON" || (value)) { //First test for Amazon Alexa second for Google Assistant
+            Serial.println("value: " + value);
+            if(value == "ON" || value == "OFF"){ // On / Off with Amazon Alexa
+              if(value == "ON") {
                 turnOn(deviceId);
-            } else {
+              } else {
+                  turnOff(deviceId);
+              }
+            }
+            else{ // On / Off with Google Assistant
+              bool value = json["value"]["on"];
+              if(value){
+                turnOn(deviceId);
+              }else{
                 turnOff(deviceId);
+
+                
+              }
             }
         }
         else if (action == "SetTargetTemperature") {
