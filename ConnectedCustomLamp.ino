@@ -22,15 +22,24 @@ bool isConnected = false;
 int leds_number = 13;
 CRGB leds[13];
 
+float brightness = 1.0;
+String color = "white";
 boolean Multicolor = false;
 boolean Pacours = false;
 int MulticolorColor = 0;
 
+void SetColorOnOneLED(int i, int R, int G, int B){
+  R = R * brightness;
+  G = G * brightness;
+  B = B * brightness;
+  leds[i] = CRGB ( R, G, B);
+}
 void SetAColorAllTheLEDSripe(int R, int G, int B){
   for(int i=0;i<leds_number;i++){
-    leds[i] = CRGB ( R, G, B);
+    SetColorOnOneLED(i, R, G, B);
   }
 }
+
 void ChangeColorLEDSripe(String color){
   if(color == "white"){
     SetAColorAllTheLEDSripe(255, 255, 255);
@@ -58,16 +67,16 @@ void OneLEDCircuit(){
   SwitchOffLights();
   if((Pacours)){
     for(int i=1;i<leds_number-1;i++){
-      leds[i-1] = CRGB ( 0, 0, 0);
-      leds[i] = CRGB ( 255, 0, 0);
-      leds[i+1] = CRGB ( 0, 0, 255);
+      SetColorOnOneLED(i-1, 0, 0, 0);
+      SetColorOnOneLED(i, 255, 0, 0);
+      SetColorOnOneLED(i+1, 0, 0, 255);
       FastLED.show();
       delay(35);
     }
     for(int i=1;i<leds_number-1;i++){
-      leds[i-1] = CRGB ( 0, 0, 0);
-      leds[i] = CRGB ( 0, 255, 0);
-      leds[i+1] = CRGB ( 0, 0, 255);
+      SetColorOnOneLED(i-1, 0, 0, 0);
+      SetColorOnOneLED(i, 0, 255, 0);
+      SetColorOnOneLED(i+1, 0, 0, 255);
       FastLED.show();
       delay(35);
     }
@@ -215,7 +224,6 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
             Serial.println("[WSc] received test command from sinric.com");
         }
         else if((action == "SetColor") || (action == "SetColorTemperature")|| (action == "action.devices.commands.ColorAbsolute")){
-          String color;
           if(action == "SetColor"){
             int hue = json["value"]["hue"];
             
@@ -261,6 +269,17 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
             Serial.println("color: " + color);
             ChangeColorLEDSripe(color);
             
+        }else if((action == "action.devices.commands.BrightnessAbsolute") || (action == "SetBrightness")){
+          if(action == "action.devices.commands.BrightnessAbsolute"){
+            brightness = float(int(json["value"]["brightness"])) / 100;
+          }else{
+            brightness = float(int(json["value"])) / 100;
+          }
+          
+          if((!Multicolor) && (!Pacours)){
+            ChangeColorLEDSripe(color);
+          }
+          
         }
       }
       break;
